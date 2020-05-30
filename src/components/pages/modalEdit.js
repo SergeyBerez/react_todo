@@ -1,20 +1,21 @@
 import React from "react";
 
 export default function modalEdit({
-  nameTask,
+  title,
   toggleModal,
   changeTitlebyModal,
   value,
   editTask,
-  user,
+  id_user,
   id_task,
 }) {
+  console.log("=======render modal");
   return (
     <div className="modal">
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">{nameTask}</h5>
+            <h5 className="modal-title">{title}</h5>
             <button type="button" className="close" onClick={toggleModal}>
               <span aria-hidden="true">&times;</span>
             </button>
@@ -39,7 +40,7 @@ export default function modalEdit({
             </button>
             <button
               onClick={() => {
-                editTask(user, id_task);
+                editTask(id_user, id_task);
               }}
               type="button"
               className="btn btn-primary"

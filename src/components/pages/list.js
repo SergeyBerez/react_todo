@@ -14,24 +14,24 @@ export default class list extends Component {
 
   render() {
     console.log("======render list", this.props);
-    console.log(this.props.value);
+
     return (
       <li className="list-group-item  userTasksLi">
         <div className="">
           <i className="fas fa-thumbtack"></i>
           <span>
-            {this.props.nameTask}&nbsp; {this.props.time}
+            {this.props.title}&nbsp; {this.props.time}
           </span>
         </div>
         <div>
           {this.state.modalShow ? (
             <Modal
+              id_user={this.props.id_user}
               id_task={this.props.id_task}
-              user={this.props.user}
-               value={this.props.value}
+              title={this.props.title}
+              value={this.props.value}
               editTask={this.props.editTask}
               changeTitlebyModal={this.props.changeTitlebyModal}
-              nameTask={this.props.nameTask}
               toggleModal={this.toggleModal.bind(this)}
             />
           ) : null}
@@ -43,7 +43,9 @@ export default class list extends Component {
             <i className="fas fa-edit"></i>
           </button>
           <button
-            onClick={this.props.deleteTask}
+            onClick={() => {
+              this.props.deleteTask(this.props.id_user, this.props.id_task);
+            }}
             type="button"
             className="btn btn-outline-danger"
           >

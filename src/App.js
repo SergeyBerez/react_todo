@@ -168,8 +168,18 @@ function App() {
     // });
     setTodos({ todos, value: statetodos.value });
   };
-  const deleteTask = () => {
-    console.log(1111);
+  const deleteTask = (id_user, id_task) => {
+    let users = { ...statetodos };
+    let user = { ...users[id_user] };
+    let userTasks = [...users[id_user].tasks];
+
+    let tasks = userTasks.filter((task) => {
+      return task.id_task !== id_task;
+    });
+    user.tasks = tasks;
+    users[id_user] = user;
+    setTodos({ ...users });
+    setValueUser({ value: "" });
   };
 
   return (

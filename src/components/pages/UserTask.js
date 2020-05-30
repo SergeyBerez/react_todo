@@ -6,24 +6,20 @@ export default class UserTask extends React.Component {
   };
 
   componentDidMount() {
-    console.log("============componentDidMount", this.props.users);
-
-    console.log(this.props.history.match.params.id);
-    let tasks = [];
-    Object.keys(this.props.users).forEach((userId) => {
-      let task = this.props.users[userId];
-
-      if (task.id_user === parseInt(this.props.history.match.params.id)) {
-        this.setState({ tasks });
-        // tasks.push(task.tasks);
-        // console.log(tasks);
-      }
-    });
-
+    // console.log("============componentDidMount", this.props.users);
+    // console.log(this.props.history.match.params.id);
+    // let tasks = [];
+    // Object.keys(this.props.users).forEach((userId) => {
+    //   let task = this.props.users[userId];
+    //   if (task.id_user === parseInt(this.props.history.match.params.id)) {
+    //     this.setState({ tasks });
+    //      tasks.push(task.tasks);
+    //      console.log(tasks);
+    //   }
+    // });
     // let userTodo = this.props.todos.find((item, i) => {
     //   return item.id_user === parseInt(this.props.history.match.params.id);
     // });
-
     // if (userTodo) {
     //   this.setState({ userTodo });
     // }
@@ -50,11 +46,11 @@ export default class UserTask extends React.Component {
       console.log(item);
       return (
         <List
-          user={parseInt(this.props.history.match.params.id)}
-          value={this.props.valueTodo}
-          nameTask={item.title}
           key={i}
+          id_user={parseInt(this.props.history.match.params.id)}
           id_task={item.id_task}
+          value={this.props.valueTodo}
+          title={item.title}
           time={item.time}
           editTask={this.props.editTask}
           changeTitlebyModal={this.props.changeTitlebyModal}
@@ -104,7 +100,9 @@ export default class UserTask extends React.Component {
           <ul className="list-group list-group-flush"> {task}</ul>
           {Object.keys(this.props.users).length === 0 ? (
             <p>добавьте user</p>
-          ) : null}
+          ) : (
+           null
+          )}
         </div>
       </div>
     );
