@@ -26,8 +26,8 @@ export default class UserTask extends React.Component {
   }
 
   render() {
-    console.log("==============render user tasks", this.props.users);
-    //console.log(Object.keys(this.props.users).length === 0);
+    //console.log("==============render user tasks", this.props.users);
+    
 
     let tasks = [];
     let name = "";
@@ -43,7 +43,7 @@ export default class UserTask extends React.Component {
     });
 
     let task = tasks.map((item, i) => {
-      console.log(item);
+   
       return (
         <List
           key={i}

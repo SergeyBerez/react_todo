@@ -3,7 +3,7 @@ import { NavLink, Route } from "react-router-dom";
 
 export default class Main extends React.Component {
   render() {
-    console.log("================render ===== user",this.props.users);
+   // console.log("================render ===== user",this.props.users);
 
     let users = this.props.users;
     let liUsers = Object.keys(users).map((userId, i) => {

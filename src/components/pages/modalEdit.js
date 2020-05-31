@@ -9,7 +9,7 @@ export default function modalEdit({
   id_user,
   id_task,
 }) {
-  console.log("=======render modal");
+ // console.log("=======render modal");
   return (
     <div className="modal">
       <div className="modal-dialog">

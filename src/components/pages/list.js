@@ -1,6 +1,5 @@
-//import React from "react";
+
 import Modal from "./modalEdit";
-//import { useState } from "react";
 
 import React, { Component } from "react";
 
@@ -13,7 +12,7 @@ export default class list extends Component {
   }
 
   render() {
-    console.log("======render list", this.props);
+    //console.log("======render list", this.props);
 
     return (
       <li className="list-group-item  userTasksLi">
