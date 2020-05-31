@@ -63,13 +63,10 @@ export default class UserTask extends React.Component {
 
     return (
       <div>
-        <h1>{name}</h1>
-        {/* <div className="alert alert-primary" role="alert">
-          <h1>{this.state.userTodo.user_name}</h1>
-          {this.props.todos.length !== 0 ? null : (
-            <span>at first add user</span>
-          )}
-        </div> */}
+        <div className="alert alert-primary" role="alert">
+          <h1>{name}</h1>
+          {tasks.length !== 0 ? null : <span>no tasks add task</span>}
+        </div>
 
         <div className="input-group col-lg-6">
           <input
@@ -100,9 +97,7 @@ export default class UserTask extends React.Component {
           <ul className="list-group list-group-flush"> {task}</ul>
           {Object.keys(this.props.users).length === 0 ? (
             <p>добавьте user</p>
-          ) : (
-           null
-          )}
+          ) : null}
         </div>
       </div>
     );

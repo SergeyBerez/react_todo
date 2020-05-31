@@ -3,7 +3,7 @@ import { NavLink, Route } from "react-router-dom";
 
 export default class Main extends React.Component {
   render() {
-    console.log("================render ===== user");
+    console.log("================render ===== user",this.props.users);
 
     let users = this.props.users;
     let liUsers = Object.keys(users).map((userId, i) => {
@@ -31,8 +31,8 @@ export default class Main extends React.Component {
 
     return (
       <div>
-        {/* <div className="alert alert-primary" role="alert">
-          {this.props.todos.length !== 0 ? (
+        <div className="alert alert-primary" role="alert">
+          { Object.keys( this.props.users).length !== 0 ? (
             <>
               <i className="fas fa-users "></i>
               <span>all users</span>
@@ -42,7 +42,7 @@ export default class Main extends React.Component {
               <i className="fas fa-users "></i> <span>not users add user</span>
             </>
           )}
-        </div> */}
+        </div>
 
         <div className="input-group ">
           <input

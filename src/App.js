@@ -16,36 +16,17 @@ function App() {
   //   setState({ isShow });
   // };
 
-  let store = {
-    // 343443: {
-    //   id_user: 1,
-    //   user_name: "sergey",
-    //   time: new Date().toLocaleDateString(),
-    //   completed: false,
-    //   tasks: [
-    //     { id_task: 4, title: " sergey купить  " },
-    //     { id_task: 3, title: " sergey купить1  " },
-    //   ],
-    // },
-    // todos: [
-    // {
-    // },
-    //   {
-    //     id_user: 2,
-    //     user_name: "vasya",
-    //     time: new Date().toLocaleDateString(),
-    //     completed: false,
-    //     tasks: [{ id_task: 4, title: "vasya купить  " }],
-    //   },
-    // ],
-  };
-  const [statetodos, setTodos] = useState(store);
+  const [statetodos, setTodos] = useState({});
   const [valueUser, setValueUser] = useState({ value: "" });
   const [valueTodo, setValueTodor] = useState({ value: "" });
   // useEffect(() => {
   //   setTodos(store);
   // });
+  useEffect(() => {
+    let users = JSON.parse(localStorage.getItem("users")) || {};
 
+    setTodos({ ...users });
+  }, []);
   const editTask = (id_user, id_task) => {
     console.log(id_user, id_task);
     let users = { ...statetodos };
@@ -64,6 +45,7 @@ function App() {
     users[id_user] = user;
 
     setTodos({ ...users });
+    localStorage.setItem("users", JSON.stringify({ ...users }));
     setValueTodor({ value: "" });
 
     // let todos = [...statetodos.todos].map((user) => {
@@ -92,6 +74,10 @@ function App() {
 
     // users.push(newUser);
     setTodos({ ...statetodos, ...newUser });
+    localStorage.setItem(
+      "users",
+      JSON.stringify({ ...statetodos, ...newUser })
+    );
     setValueUser({ value: "" });
   };
   const addTodoitems = (id_user) => {
@@ -108,6 +94,7 @@ function App() {
     user.tasks = userTasks;
     users[id_user] = user;
     setTodos({ ...users });
+    localStorage.setItem("users", JSON.stringify({ ...users }));
     setValueUser({ value: "" });
 
     //let date = new Date();
@@ -179,6 +166,7 @@ function App() {
     user.tasks = tasks;
     users[id_user] = user;
     setTodos({ ...users });
+    localStorage.setItem("users", JSON.stringify({ ...users }));
     setValueUser({ value: "" });
   };
 
@@ -199,7 +187,7 @@ function App() {
           {/* <NavLink exact to="/" className="nav-link" href="#">
             Home
           </NavLink> */}
-          <NavLink exact to="/" className="nav-link" href="#">
+          <NavLink exact to="/users" className="nav-link" href="#">
             users
           </NavLink>
 
@@ -226,7 +214,7 @@ function App() {
         <Route
           exact
           path="/users"
-          // component={Main}
+        
           render={() => (
             <Users
               addUser={addUser}
@@ -238,7 +226,7 @@ function App() {
         ></Route>
         <Route
           path="/users/:id"
-          // component={UserTask}
+         
           render={(e) => (
             <UserTask
               valueUser={valueUser.value}
@@ -254,21 +242,7 @@ function App() {
           )}
         />
         <Route path="/about" component={About}></Route>
-        {/* <Route
-          path="/todolist"
-          render={() => (
-            <TodoList
-              addUser={addUser}
-              deleteUser={deleteUser}
-             // onShowUserTask={onShowUserTask}
-              changeTitle={changeTitle}
-              addTodoitems={addTodoitems}
-              onchangeChek={changeChecked}
-              todos={statetodos.todos}
-              value={statetodos.value}
-            />
-          )}
-        /> */}
+      
         <Redirect to="/users"></Redirect>
         <Route
           render={() => {
