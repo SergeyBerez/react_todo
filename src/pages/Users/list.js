@@ -1,8 +1,5 @@
-
-import Modal from "./modalEdit";
-
+import Modal from "../../components/modalEdit";
 import React, { Component } from "react";
-
 export default class list extends Component {
   state = {
     modalShow: false,
@@ -12,17 +9,38 @@ export default class list extends Component {
   }
 
   render() {
-    //console.log("======render list", this.props);
+    // console.log("======render list", this.props);
 
     return (
       <li className="list-group-item  userTasksLi">
-        <div className="">
+        <div className="list-item">
           <i className="fas fa-thumbtack"></i>
-          <span>
-            {this.props.title}&nbsp; {this.props.time}
-          </span>
+          <span>{this.props.title}</span>
         </div>
-        <div>
+        <div className="list-item">
+          <span>{this.props.time}</span>
+        </div>
+        <div className="list-item">
+          <button
+            onClick={this.toggleModal.bind(this)}
+            type="button"
+            className="btn btn-outline-warning"
+          >
+            <i className="fas fa-edit"></i>
+          </button>
+          <button
+            onClick={() => {
+              this.props.deleteTask(
+                this.props.id_user,
+                this.props.id_task,
+                this.props.id
+              );
+            }}
+            type="button"
+            className="btn btn-outline-danger"
+          >
+            <i className="fas fa-trash-alt"></i>
+          </button>
           {this.state.modalShow ? (
             <Modal
               id_user={this.props.id_user}
@@ -34,22 +52,6 @@ export default class list extends Component {
               toggleModal={this.toggleModal.bind(this)}
             />
           ) : null}
-          <button
-            onClick={this.toggleModal.bind(this)}
-            type="button"
-            className="btn btn-outline-warning"
-          >
-            <i className="fas fa-edit"></i>
-          </button>
-          <button
-            onClick={() => {
-              this.props.deleteTask(this.props.id_user, this.props.id_task);
-            }}
-            type="button"
-            className="btn btn-outline-danger"
-          >
-            <i className="fas fa-trash-alt"></i>
-          </button>
         </div>
       </li>
     );

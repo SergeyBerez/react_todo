@@ -1,14 +1,23 @@
-import React from "react";
-import Users from "./components/pages/Users";
-import { useState, useEffect } from "react";
-//import TodoList from "./components/TodoList";
-import About from "./components/pages/About";
-import UserTask from "./components/pages/UserTask";
+import React, { useState, useEffect } from "react";
+import firebase from "firebase";
+
+import { Route, Switch, NavLink, Redirect } from "react-router-dom";
+import Container from "@material-ui/core/Container";
 
 import "./App.css";
-import { Route, Switch, NavLink, Redirect } from "react-router-dom";
+import MiniDrawer from "./components/Links/Drower";
+
+import Home from "./pages/Home";
+import Users from "./pages/Users/Users";
+import UserPersonalTasks from "./pages/Users/UserPersonalTasks";
+import About from "./pages/About";
+
+
+
+// import Home from "./components/pages/list";
 
 function App() {
+  // const classes = useStyles();
   // const [state, setState] = useState({ isShow: true });
 
   // const onLogin = () => {
@@ -16,20 +25,92 @@ function App() {
   //   setState({ isShow });
   // };
 
-  const [statetodos, setTodos] = useState({});
+  const USERS_LOCAL_STORAGE = JSON.parse(localStorage.getItem("users")) || [];
+
+  const [stateUsers, setUsers] = useState(USERS_LOCAL_STORAGE);
   const [valueUser, setValueUser] = useState({ value: "" });
   const [valueTodo, setValueTodor] = useState({ value: "" });
   // useEffect(() => {
-  //   setTodos(store);
+  //   setUsers(store);
   // });
   useEffect(() => {
-    let users = JSON.parse(localStorage.getItem("users")) || {};
-
-    setTodos({ ...users });
+    console.log("use effect");
+    getUsersFromFairbase();
   }, []);
+
+  const getUsersFromFairbase = async (params) => {
+    let response = await fetch(
+      "https://react-quize-46f17.firebaseio.com/users.json"
+    );
+    let users = [...stateUsers];
+    console.log(users);
+    // let newUsers = [];
+    if (response.ok) {
+      let json = await response.json();
+      console.log("getUsersFromFairbase", json);
+
+      // if (users.length !== 0 && json) {
+      //   users.filter((user) => {
+      //     return Object.values(json).find((item) => {
+      //       return item.id_user !== user.id_user;
+      //     });
+      //   });
+      // } else if (json) {
+      //   Object.values(json).forEach((user) => {
+      //     users.push(user);
+      //   });
+      // }
+      //setUsers([...users, ...json]);
+      localStorage.setItem("users", JSON.stringify(users));
+      setUsers(users);
+    } else {
+      alert("Ошибка HTTP: " + response.status);
+    }
+  };
+  const postUsertoFirebase = (userParam) => {
+    const db = firebase.database();
+
+    db.ref("users/" + userParam.id_user).set(userParam);
+  };
+
+  const addUser = () => {
+    let newUser = {
+      id_user: Date.now() + 1,
+      time: new Date().toString().split("G")[0],
+      user_name: valueUser.value,
+      completed: false,
+      tasks: [],
+      countTask: 0,
+    };
+    if (valueUser.value.length > 2) {
+      let users = [...stateUsers];
+      users.push(newUser);
+      localStorage.setItem("users", JSON.stringify(users));
+      setUsers(users);
+      setValueUser({ value: "" });
+      postUsertoFirebase(newUser);
+    } else {
+    }
+
+    // users.push(newUser);
+    // localStorage.setItem("users", JSON.stringify(users));
+    // setUsers(users);
+    // setValueUser({ value: "" });
+
+    // setValueUser({ value: "" });
+  };
+  const keyHandle = (e, id_user, count_task) => {
+    console.log("ddddddd", e.keyCode);
+    if (e.keyCode === 13 && valueUser.value.length > 2) {
+      addUser();
+      if (id_user) {
+        addTodoTaskUser(id_user, count_task);
+      }
+    }
+  };
   const editTask = (id_user, id_task) => {
     console.log(id_user, id_task);
-    let users = { ...statetodos };
+    let users = [...stateUsers];
     let user = { ...users[id_user] };
     let userTasks = [...users[id_user].tasks];
     console.log(userTasks);
@@ -44,15 +125,15 @@ function App() {
     user.tasks = userTasks;
     users[id_user] = user;
 
-    setTodos({ ...users });
+    setUsers({ ...users });
     localStorage.setItem("users", JSON.stringify({ ...users }));
     setValueTodor({ value: "" });
 
-    // let todos = [...statetodos.todos].map((user) => {
+    // let todos = [...stateUsers.todos].map((user) => {
     //   if (user.id_user === id_user) {
     //     [...user.tasks].map((item) => {
     //       if (item.id_task === id_task) {
-    //         item.title = statetodos.value1;
+    //         item.title = stateUsers.value1;
     //       }
     //       return item;
     //     });
@@ -60,189 +141,140 @@ function App() {
     //   return user;
     // });
 
-    // setTodos({ todos, value: "", value1: "" });
+    // setUsers({ todos, value: "", value1: "" });
   };
-  const addUser = () => {
-    let newUser = {
-      [`${new Date().getTime() + 1}`]: {
-        id_user: new Date().getTime() + 1,
-        user_name: valueUser.value,
-        completed: false,
-        tasks: [],
-      },
-    };
 
-    // users.push(newUser);
-    setTodos({ ...statetodos, ...newUser });
-    localStorage.setItem(
-      "users",
-      JSON.stringify({ ...statetodos, ...newUser })
-    );
-    setValueUser({ value: "" });
-  };
-  const addTodoitems = (id_user) => {
-    let users = { ...statetodos };
-    let user = { ...users[id_user] };
-    let userTasks = [...users[id_user].tasks];
-    let date = new Date();
-    userTasks.push({
-      id_task: new Date().getTime() + 1,
-      title: valueUser.value,
-      time: `${new Date().toLocaleDateString()} :${date.getHours()}:${date.getMinutes()}`,
-    });
+  const addTodoTaskUser = (id_user, count_task) => {
+    if (valueUser.value.length > 2) {
+      let users = [...stateUsers];
+      let user = users.find((user, i) => {
+        return user.id_user === id_user;
+      });
+      console.log("user===================", user);
+      console.log("user===================", users);
+      user.countTask = count_task + 1;
+      const userTasks = [...user.tasks];
+      const date = new Date();
+      userTasks.push({
+        id_task: new Date().getTime() + 1,
+        title: valueUser.value,
+        time_task: `${new Date().toLocaleDateString()} :${date.getHours()}:${date.getMinutes()}`,
+      });
+      user.tasks = userTasks;
 
-    user.tasks = userTasks;
-    users[id_user] = user;
-    setTodos({ ...users });
-    localStorage.setItem("users", JSON.stringify({ ...users }));
-    setValueUser({ value: "" });
-
-    //let date = new Date();
-
-    // todos.map((user) => {
-    //   if (user.id_user === id_user) {
-    //     let newTodo = {
-    //       id_task: new Date().getTime() + 1,
-    //       title: statetodos.value,
-    //       time: `${new Date().toLocaleDateString()} :${date.getHours()}:${date.getMinutes()}`,
-    //       completed: false,
-    //     };
-    //     user.tasks.push(newTodo);
-    //   }
-    //   return user;
-    // });
-
-    // setTodos({ todos, value: "" });
+      setUsers(users);
+      localStorage.setItem("users", JSON.stringify(users));
+      setValueUser({ value: "" });
+      postUsertoFirebase(user);
+    }
   };
 
   // const changeChecked = (e, i) => {
-  //   let todos = [...statetodos.todos];
+  //   let todos = [...stateUsers.todos];
   //   todos[i].completed = e.target.checked;
 
-  //   setTodos({ todos, value: statetodos.value });
+  //   setUsers({ todos, value: stateUsers.value });
   // };
-  const changeTitle = (value) => {
-    //let arr = {...statetodos;}
-    //  setTodos({ todos: arr,});
+  const changeTitleUserTask = (value) => {
+    console.log("vlaue", value);
+    //let arr = {...stateUsers;}
+    //  setUsers({ todos: arr,});
     setValueUser({ value });
   };
-
+  const preventDefault = (e) => {
+    console.log(e.target);
+    e.preventDefault();
+  };
   const changeTitlebyModal = (value) => {
     setValueTodor({ value });
-    // let users = {...statetodos.todos};
-    // setTodos({ todos: arr, value: "", value1: e });
+    // let users = {...stateUsers.todos};
+    // setUsers({ todos: arr, value: "", value1: e });
   };
   // const onShowUserTask = (id) => {
-  //   let todos = [...statetodos.todos].map((user) => {
+  //   let todos = [...stateUsers.todos].map((user) => {
   //     if (user.id === id) {
   //       user.completed = !user.completed;
   //     }
   //     return user;
   //   });
 
-  //   console.log(statetodos);
-  //   setTodos({ todos, value: statetodos.value });
+  //   console.log(stateUsers);
+  //   setUsers({ todos, value: stateUsers.value });
   // };
-  const deleteUser = (id) => {
-    // id++;
-    // console.log(id);
-    let todos = [...statetodos.todos];
+  const deleteUser = (idUser) => {
+    let users = [...stateUsers];
 
-    todos.splice(id, 1);
-    // let todos = [...statetodos.todos].filter((items) => {
-    //   console.log(items.id);
-    //   return items.id !== id;
-    // });
-    setTodos({ todos, value: statetodos.value });
+    users.splice(idUser, 1);
+    setUsers(users);
   };
-  const deleteTask = (id_user, id_task) => {
-    let users = { ...statetodos };
-    let user = { ...users[id_user] };
-    let userTasks = [...users[id_user].tasks];
-
-    let tasks = userTasks.filter((task) => {
-      return task.id_task !== id_task;
+  const deleteTask = (idUser, idTask, id) => {
+    console.log(id);
+    let users = [...stateUsers];
+    let user = users.find((user) => {
+      return user.id_user === idUser;
     });
-    user.tasks = tasks;
-    users[id_user] = user;
-    setTodos({ ...users });
-    localStorage.setItem("users", JSON.stringify({ ...users }));
-    setValueUser({ value: "" });
+    user.tasks.splice(id, 1);
+    // let userTasks = user.tasks.filter((task) => {
+    //   return task.id_task !== idTask;
+    // });
+
+    // user.tasks = userTasks;
+    users.push(user);
+    let arrUsers = users.filter((user, pos) => {
+      // console.log(users.indexOf(user), pos);
+      return users.indexOf(user) === pos;
+    });
+    console.log(users);
+    console.log(user);
+    // Object.assign(user, users);
+
+    // let tasks = userTasks.filter((task) => {
+    //   return task.id_task !== id_task;
+    // });
+    // user.tasks = tasks;
+    // users[id_user] = user;
+    setUsers(arrUsers);
+    localStorage.setItem("users", JSON.stringify(arrUsers));
+    // setValueUser({ value: "" });
   };
 
   return (
-    <div className="container">
-      {/* {state ? <h2>вы вошли</h2> : <h2>авторизируйтесь</h2>} */}
-      {/* <button
-        type="button"
-        onClick={() => {
-          onLogin();
-        }}
-        className="btn btn-primary"
-      >
-        добавьте пользователя
-      </button> */}
-      {true ? (
-        <nav className="nav justify-content-center">
-          {/* <NavLink exact to="/" className="nav-link" href="#">
-            Home
-          </NavLink> */}
-          <NavLink exact to="/users" className="nav-link" href="#">
-            users
-          </NavLink>
-
-          {/* <NavLink to="/todolist" className="nav-link" href="#">
-            TodoList
-          </NavLink> */}
-          <NavLink to="/about" className="nav-link " href="#">
-            About
-          </NavLink>
-        </nav>
-      ) : null}
-
-      {/* {state ? <Route exact path="/"></Route> : null} */}
-
+    <Container maxWidth="md">
+      <MiniDrawer />
       <Switch>
-        {/* <Route
-          exact
-          path="/"
-          render={() => {
-            return <h1>home page</h1>;
-          }}
-        /> */}
-
+        <Route exact path="/" component={Home} />
         <Route
           exact
           path="/users"
-        
           render={() => (
             <Users
               addUser={addUser}
-              changeTitle={changeTitle}
-              users={statetodos}
+              keyHandle={keyHandle}
+              changeTitle={changeTitleUserTask}
+              users={stateUsers}
               value={valueUser.value}
+              deleteUser={deleteUser}
             />
           )}
         ></Route>
         <Route
           path="/users/:id"
-         
           render={(e) => (
-            <UserTask
+            <UserPersonalTasks
               valueUser={valueUser.value}
               valueTodo={valueTodo.value}
               history={e}
-              users={statetodos}
-              addTodoitems={addTodoitems}
+              users={stateUsers}
+              keyHandle={keyHandle}
+              addTodoTaskUser={addTodoTaskUser}
               editTask={editTask}
-              changeTitle={changeTitle}
+              changeTitleUserTask={changeTitleUserTask}
               changeTitlebyModal={changeTitlebyModal}
               deleteTask={deleteTask}
             />
           )}
         />
         <Route path="/about" component={About}></Route>
-      
         <Redirect to="/users"></Redirect>
         <Route
           render={() => {
@@ -250,8 +282,9 @@ function App() {
           }}
         />
       </Switch>
-    </div>
+    </Container>
   );
 }
 
 export default App;
+
