@@ -81,15 +81,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
   },
 }));
-
-const MiniDrawer = () => {
-  const classes = useStyles();
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const links = [
+ const links = [
     {
       title: "home",
-      link: "/",
+      link: "/react_todo",
       icon: "<PeopleAltTwoToneIcon/>",
     },
     {
@@ -101,6 +96,12 @@ const MiniDrawer = () => {
       link: "/about",
     },
   ];
+
+const MiniDrawer = () => {
+  const classes = useStyles();
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+ 
   const handleDrawerOpen = () => {
     setOpen(true);
   };

@@ -242,7 +242,7 @@ function App() {
     <Container maxWidth="md">
       <MiniDrawer />
       <Switch>
-        <Route exact path="/" component={Home} />
+        <Route exact path="/react_todo" component={Home} />
         <Route
           exact
           path="/users"
@@ -275,7 +275,7 @@ function App() {
           )}
         />
         <Route path="/about" component={About}></Route>
-        <Redirect to="/users"></Redirect>
+        <Redirect to="/react_todo"></Redirect>
         <Route
           render={() => {
             return <h1 style={{ color: "red" }}> 404 not found page...</h1>;
