@@ -2,6 +2,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+Open in browser show this app  https://sergeyberez.github.io/react_todo/
+
 In the project directory, you can run:
 
 ### `npm start`
